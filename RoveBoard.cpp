@@ -6,28 +6,28 @@
 #include <WiFiUdp.h>
 #include <IPAddress.h>
 
-WiFiUdp udpReceiver;
+WiFiUDP udpReceiver;
 
-void roveWiFi_NetworkingStart(char* ssid, char* password, uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
+void roveWiFi_NetworkingStart(char* ssid, char* password, uint8_t IP_octet1, uint8_t IP_octet2, uint8_t IP_octet3, uint8_t IP_octet4)
 {
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
   }
-  IPAddress ip(first_octet, second_octet, third_octet, fourth_octet);
-  IPAddress gateway(first_octet, second_octet, third_octet, 1);
+  IPAddress ip(IP_octet1, IP_octet2, IP_octet3, IP_octet4);
+  IPAddress gateway(IP_octet1, IP_octet2, IP_octet3, 1);
   IPAddress subnet(255, 255, 255, 0);
   WiFi.config(ip, gateway, subnet);
 }
 
-roveWiFi_Error roveWiFi_UdpSocketListen(uint16_t port)
+RoveWiFi_Error roveWiFi_UdpSocketListen(uint16_t port)
 {
   udpReceiver.begin(port);
   return ROVE_WIFI_ERROR_SUCCESS;
 }
 
-roveWiFi_Error roveWiFi_SendUdpPacket(roveIP destIP, uint16_t destPort, const uint8_t* msg, size_t msgSize)
+RoveWiFi_Error roveWiFi_SendUdpPacket(roveIP destIP, uint16_t destPort, const uint8_t* msg, size_t msgSize)
 {
   udpReceiver.beginPacket(destIP, destPort);
   udpReceiver.write(msg, msgSize);
@@ -35,7 +35,7 @@ roveWiFi_Error roveWiFi_SendUdpPacket(roveIP destIP, uint16_t destPort, const ui
   return ROVE_WIFI_ERROR_SUCCESS;
 }
 
-roveWiFi_Error roveWiFi_GetUdpMsg(roveIP* senderIP, void* buffer, size_t bufferSize)
+RoveWiFi_Error roveWiFi_GetUdpMsg(roveIP* senderIP, void* buffer, size_t bufferSize)
 {
   int packetSize = udpReceiver.parsePacket(); 
   
